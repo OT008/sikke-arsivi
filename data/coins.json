@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "id": "2026-07-21-f90ae595",
+    "title": "Bosna herkes parası",
+    "country": "Bosna",
+    "year": "2026",
+    "denomination": "10",
+    "material": "Bakir",
+    "status": "Tanımlandı",
+    "notes": "Kuzen hediyesi",
+    "frontImage": "images/coins/2026-07-21-f90ae595-on.webp",
+    "backImage": "images/coins/2026-07-21-f90ae595-arka.webp",
+    "addedAt": "2026-07-21T08:29:06.750Z"
+  }
+]
