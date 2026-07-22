@@ -1,6 +1,9 @@
 const config = window.SIKKE_CONFIG;
 let githubToken = "";
 const apiBase = "https://api.github.com";
+const repoApiPath = `/repos/${encodeURIComponent(config.adminUsername)}/${encodeURIComponent(config.repository)}`;
+const encodedBranchPath = String(config.branch || "main").split("/").map(encodeURIComponent).join("/");
+const rawBase = `https://raw.githubusercontent.com/${encodeURIComponent(config.adminUsername)}/${encodeURIComponent(config.repository)}/${encodedBranchPath}/`;
 const loginPanel = document.querySelector("#loginPanel");
 const editorPanel = document.querySelector("#editorPanel");
 const loginNotice = document.querySelector("#loginNotice");
@@ -13,6 +16,7 @@ const saveButton = document.querySelector("#saveButton");
 const frontImageInput = document.querySelector("#frontImage");
 const backImageInput = document.querySelector("#backImage");
 const refreshCoinsButton = document.querySelector("#refreshCoinsButton");
+const cleanupImagesButton = document.querySelector("#cleanupImagesButton");
 const beginDeleteButton = document.querySelector("#beginDeleteButton");
 const confirmDeleteButton = document.querySelector("#confirmDeleteButton");
 const cancelDeleteButton = document.querySelector("#cancelDeleteButton");
@@ -25,7 +29,12 @@ const selectedCoinIds = new Set();
 const previewObjectUrls = new Map();
 
 const clean = (value) => String(value ?? "").replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
-const repoPath = path => `/repos/${encodeURIComponent(config.adminUsername)}/${encodeURIComponent(config.repository)}/contents/${path.split("/").map(encodeURIComponent).join("/")}`;
+const repoPath = path => `${repoApiPath}/contents/${path.split("/").map(encodeURIComponent).join("/")}`;
+const rawFileUrl = path => {
+  const value = String(path || "");
+  if (!value || /^(?:https?:|data:|blob:)/i.test(value)) return value;
+  return `${rawBase}${value.split("/").map(encodeURIComponent).join("/")}`;
+};
 
 function setNotice(el, message, type = "") {
   el.className = `notice ${type}`.trim();
@@ -40,7 +49,9 @@ async function api(path, options = {}) {
   if (!response.ok) {
     let message = `GitHub hatası (${response.status})`;
     try { message = (await response.json()).message || message; } catch {}
-    throw new Error(message);
+    const error = new Error(message);
+    error.status = response.status;
+    throw error;
   }
   return response.status === 204 ? null : response.json();
 }
@@ -82,11 +93,54 @@ function toBase64(blob) {
   return new Promise((resolve, reject) => { const r = new FileReader(); r.onload = () => resolve(r.result.split(",")[1]); r.onerror = reject; r.readAsDataURL(blob); });
 }
 
-async function putFile(path, content, message, sha) {
-  return api(repoPath(path), {
-    method: "PUT", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message, content, branch: config.branch, ...(sha ? { sha } : {}) })
+async function commitFiles({ upserts, deletions = [], message }) {
+  const branchRefPath = `${repoApiPath}/git/ref/heads/${encodedBranchPath}`;
+  const branchRefsPath = `${repoApiPath}/git/refs/heads/${encodedBranchPath}`;
+  const branchRef = await api(branchRefPath);
+  const parentSha = branchRef.object.sha;
+  const parentCommit = await api(`${repoApiPath}/git/commits/${parentSha}`);
+
+  const uniqueDeletions = [...new Set(deletions)];
+  const deletionEntries = (await Promise.all(uniqueDeletions.map(async path => {
+    try {
+      await api(`${repoPath(path)}?ref=${encodeURIComponent(config.branch)}`);
+      return { path, mode: "100644", type: "blob", sha: null };
+    } catch (error) {
+      if (error.status === 404) return null;
+      throw error;
+    }
+  }))).filter(Boolean);
+
+  const upsertEntries = await Promise.all(upserts.map(async file => {
+    const blob = await api(`${repoApiPath}/git/blobs`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content: file.content, encoding: "base64" })
+    });
+    return { path: file.path, mode: "100644", type: "blob", sha: blob.sha };
+  }));
+
+  const tree = await api(`${repoApiPath}/git/trees`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ base_tree: parentCommit.tree.sha, tree: [...upsertEntries, ...deletionEntries] })
   });
+  const commit = await api(`${repoApiPath}/git/commits`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message, tree: tree.sha, parents: [parentSha] })
+  });
+
+  try {
+    await api(branchRefsPath, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sha: commit.sha, force: false })
+    });
+  } catch (error) {
+    throw new Error("Ana dal bu işlem sırasında değişti. Kayıt listesini yenileyip tekrar deneyin.");
+  }
+  return commit;
 }
 
 async function getJsonFile(path) {
@@ -104,7 +158,7 @@ function clearPreviewObjectUrl(inputId) {
 
 function showPreview(previewId, imagePath, alt, emptyText) {
   const preview = document.querySelector(previewId);
-  preview.innerHTML = imagePath ? `<img src="${clean(imagePath)}" alt="${clean(alt)}">` : clean(emptyText);
+  preview.innerHTML = imagePath ? `<img src="${clean(rawFileUrl(imagePath))}" alt="${clean(alt)}">` : clean(emptyText);
 }
 
 function resetImagePreviews(coin = null) {
@@ -208,7 +262,7 @@ function renderAdminCoins() {
   }
   adminCoinList.innerHTML = adminCoins.map(coin => `
     <article class="admin-coin-row${coin.id === editingCoinId ? " is-editing" : ""}${selectedCoinIds.has(coin.id) ? " is-selected" : ""}" data-id="${clean(coin.id)}"${deleteSelectionMode ? ` aria-selected="${selectedCoinIds.has(coin.id)}"` : ""}>
-      <div class="admin-coin-thumb"><img src="${coin.frontImage ? clean(coin.frontImage) : "icon.svg"}" alt=""></div>
+      <div class="admin-coin-thumb"><img src="${coin.frontImage ? clean(rawFileUrl(coin.frontImage)) : "icon.svg"}" alt=""></div>
       <div class="admin-coin-copy">
         <strong>${clean(coin.title || "Tanımlanmayı bekliyor")}</strong>
         <span>${clean([coin.country, coin.year, coin.denomination].filter(Boolean).join(" · ") || "Bilgi eklenmemiş")}</span>
@@ -237,20 +291,12 @@ async function loadAdminCoins() {
 
 const isManagedImage = path => typeof path === "string" && /^images\/coins\/[a-zA-Z0-9._/-]+$/.test(path) && !path.includes("..");
 
-async function deleteRepoFile(path, message) {
-  const file = await api(`${repoPath(path)}?ref=${encodeURIComponent(config.branch)}`);
-  return api(repoPath(path), {
-    method: "DELETE",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message, sha: file.sha, branch: config.branch })
-  });
-}
-
 function updateDeleteControls() {
   beginDeleteButton.classList.toggle("hidden", deleteSelectionMode);
   confirmDeleteButton.classList.toggle("hidden", !deleteSelectionMode);
   cancelDeleteButton.classList.toggle("hidden", !deleteSelectionMode);
   refreshCoinsButton.disabled = deleteSelectionMode;
+  cleanupImagesButton.disabled = deleteSelectionMode;
   confirmDeleteButton.disabled = deleteOperationBusy || selectedCoinIds.size === 0;
   cancelDeleteButton.disabled = deleteOperationBusy;
   confirmDeleteButton.textContent = selectedCoinIds.size ? `Silmeyi onayla (${selectedCoinIds.size})` : "Silmeyi onayla";
@@ -284,20 +330,17 @@ async function deleteSelectedCoins() {
     const updatedCoins = currentCoins.filter(coin => !idsToDelete.has(coin.id));
 
     const encoded = await toBase64(new Blob([JSON.stringify(updatedCoins, null, 2) + "\n"], { type: "application/json" }));
-    await putFile("data/coins.json", encoded, `Arşivden ${coinsToDelete.length} sikke sil`, current.sha);
-
-    const imageErrors = [];
     const imagePaths = [...new Set(coinsToDelete.flatMap(coin => [coin.frontImage, coin.backImage]).filter(isManagedImage))];
-    for (const path of imagePaths) {
-      try { await deleteRepoFile(path, `Toplu silinen sikke görselini kaldır`); }
-      catch (error) { imageErrors.push(error.message); }
-    }
+    await commitFiles({
+      upserts: [{ path: "data/coins.json", content: encoded }],
+      deletions: imagePaths,
+      message: `Arşivden ${coinsToDelete.length} sikke sil`
+    });
 
     adminCoins = updatedCoins;
     deleteOperationBusy = false;
     setDeleteSelectionMode(false, true);
-    if (imageErrors.length) setNotice(managerNotice, `${coinsToDelete.length} kayıt silindi; ancak görsel dosyalarından biri depoda kalmış olabilir.`, "warning");
-    else setNotice(managerNotice, `${coinsToDelete.length} kayıt ve bunlara ait ön/arka yüz görselleri başarıyla silindi.`, "success");
+    setNotice(managerNotice, `${coinsToDelete.length} kayıt ve bunlara ait ön/arka yüz görselleri tek işlemde silindi.`, "success");
   } catch (error) {
     deleteOperationBusy = false;
     updateDeleteControls();
@@ -327,6 +370,47 @@ cancelDeleteButton.addEventListener("click", () => setDeleteSelectionMode(false)
 confirmDeleteButton.addEventListener("click", deleteSelectedCoins);
 refreshCoinsButton.addEventListener("click", loadAdminCoins);
 
+async function cleanupUnusedImages() {
+  cleanupImagesButton.disabled = true;
+  refreshCoinsButton.disabled = true;
+  beginDeleteButton.disabled = true;
+  setNotice(managerNotice, "Kullanılmayan görseller aranıyor…");
+  try {
+    const current = await getJsonFile("data/coins.json");
+    const currentCoins = Array.isArray(current.data) ? current.data : [];
+    const referencedPaths = new Set(currentCoins.flatMap(coin => [coin.frontImage, coin.backImage]).filter(isManagedImage));
+    const remoteFiles = await api(`${repoPath("images/coins")}?ref=${encodeURIComponent(config.branch)}`);
+    const unusedPaths = (Array.isArray(remoteFiles) ? remoteFiles : [])
+      .filter(file => file.type === "file" && isManagedImage(file.path) && !referencedPaths.has(file.path))
+      .map(file => file.path);
+
+    if (!unusedPaths.length) {
+      setNotice(managerNotice, "Kullanılmayan görsel bulunmadı. Depo temiz.", "success");
+      return;
+    }
+    if (!window.confirm(`${unusedPaths.length} kullanılmayan görsel bulundu. Bu dosyaları depodan silmek istiyor musunuz?`)) {
+      setNotice(managerNotice, "Görsel temizleme işleminden vazgeçildi.");
+      return;
+    }
+
+    setNotice(managerNotice, `${unusedPaths.length} kullanılmayan görsel tek işlemde siliniyor…`);
+    await commitFiles({
+      upserts: [],
+      deletions: unusedPaths,
+      message: `${unusedPaths.length} kullanılmayan sikke görselini temizle`
+    });
+    setNotice(managerNotice, `${unusedPaths.length} kullanılmayan görsel depodan temizlendi.`, "success");
+  } catch (error) {
+    setNotice(managerNotice, `Görseller temizlenemedi: ${error.message}`, "error");
+  } finally {
+    cleanupImagesButton.disabled = deleteSelectionMode;
+    refreshCoinsButton.disabled = deleteSelectionMode;
+    beginDeleteButton.disabled = false;
+  }
+}
+
+cleanupImagesButton.addEventListener("click", cleanupUnusedImages);
+
 coinForm.addEventListener("submit", async event => {
   event.preventDefault();
   const frontFile = frontImageInput.files[0];
@@ -349,14 +433,15 @@ coinForm.addEventListener("submit", async event => {
     const revision = crypto.randomUUID().slice(0,8);
     let frontPath = storedCoin?.frontImage || "";
     let backPath = storedCoin?.backImage || "";
+    const upserts = [];
 
     if (frontFile) {
       frontPath = isEditing ? `images/coins/${id}-on-${revision}.webp` : `images/coins/${id}-on.webp`;
-      await putFile(frontPath, await toBase64(await imageToWebP(frontFile)), `${isEditing ? "Sikke ön yüzünü güncelle" : "Yeni sikke fotoğrafı"}: ${id}`);
+      upserts.push({ path: frontPath, content: await toBase64(await imageToWebP(frontFile)) });
     }
     if (backFile) {
       backPath = isEditing ? `images/coins/${id}-arka-${revision}.webp` : `images/coins/${id}-arka.webp`;
-      await putFile(backPath, await toBase64(await imageToWebP(backFile)), `${isEditing ? "Sikke arka yüzünü güncelle" : "Sikke arka yüzü"}: ${id}`);
+      upserts.push({ path: backPath, content: await toBase64(await imageToWebP(backFile)) });
     }
 
     const coin = {
@@ -369,26 +454,22 @@ coinForm.addEventListener("submit", async event => {
     };
     const data = isEditing ? currentCoins.map(item => item.id === coin.id ? coin : item) : [coin, ...currentCoins];
     const encoded = await toBase64(new Blob([JSON.stringify(data, null, 2) + "\n"], { type: "application/json" }));
-    await putFile("data/coins.json", encoded, `${isEditing ? "Sikke bilgilerini güncelle" : "Arşive yeni sikke ekle"}: ${coin.title}`, current.sha);
-
-    const oldImageErrors = [];
-    if (isEditing) {
-      const replacedOldPaths = [
-        frontFile && storedCoin.frontImage !== frontPath ? storedCoin.frontImage : "",
-        backFile && storedCoin.backImage !== backPath ? storedCoin.backImage : ""
-      ].filter(isManagedImage);
-      for (const path of [...new Set(replacedOldPaths)]) {
-        try { await deleteRepoFile(path, `Değiştirilen eski sikke görselini kaldır: ${id}`); }
-        catch (error) { oldImageErrors.push(error.message); }
-      }
-    }
+    upserts.push({ path: "data/coins.json", content: encoded });
+    const replacedOldPaths = isEditing ? [
+      frontFile && storedCoin.frontImage !== frontPath ? storedCoin.frontImage : "",
+      backFile && storedCoin.backImage !== backPath ? storedCoin.backImage : ""
+    ].filter(isManagedImage) : [];
+    await commitFiles({
+      upserts,
+      deletions: replacedOldPaths,
+      message: `${isEditing ? "Sikke bilgilerini güncelle" : "Arşive yeni sikke ekle"}: ${coin.title}`
+    });
 
     adminCoins = data;
     setEditMode(false);
-    if (oldImageErrors.length) setNotice(saveNotice, "Bilgiler ve yeni fotoğraf kaydedildi; ancak eski fotoğraf dosyalarından biri depoda kalmış olabilir.", "warning");
-    else setNotice(saveNotice, isEditing ? "Para bilgileri ve fotoğrafları başarıyla güncellendi. Galeri birkaç dakika içinde yenilenecek." : "Sikke başarıyla yüklendi. GitHub Pages birkaç dakika içinde galeriyi güncelleyecek.", "success");
+    setNotice(saveNotice, isEditing ? "Para bilgileri ve fotoğrafları tek işlemde güncellendi. Galeri birkaç saniye içinde yenilenir." : "Sikke tek işlemde yüklendi. Galeri birkaç saniye içinde yenilenir.", "success");
   } catch (error) {
-    setNotice(saveNotice, `${error.message}. İşlem tamamlanmadıysa mevcut kayıt ve eski fotoğraflar korunur; yeni yüklenen ancak kullanılmayan bir dosya depoda kalmış olabilir.`, "error");
+    setNotice(saveNotice, `${error.message} İşlem tamamlanmadıysa mevcut kayıt ve eski fotoğraflar korunur.`, "error");
   }
   finally { saveButton.disabled = false; }
 });
