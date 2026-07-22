@@ -1,8 +1,8 @@
 [
   {
     "id": "2026-07-22-8786c3ec",
-    "title": "Macaristan",
-    "country": "Macaristan - 10 Forint",
+    "title": "Macaristan - 10 Forint",
+    "country": "Macaristan",
     "year": "2019",
     "denomination": "10 Macar Forinti",
     "material": "Bakır-nikel-çinko alaşımı",
@@ -10,7 +10,8 @@
     "notes": "Hediye - 2026",
     "frontImage": "images/coins/2026-07-22-8786c3ec-on.webp",
     "backImage": "images/coins/2026-07-22-8786c3ec-arka.webp",
-    "addedAt": "2026-07-22T15:59:40.445Z"
+    "addedAt": "2026-07-22T15:59:40.445Z",
+    "updatedAt": "2026-07-22T16:01:28.169Z"
   },
   {
     "id": "2026-07-22-d38e8178",
