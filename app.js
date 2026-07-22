@@ -9,13 +9,13 @@ const known = value => value || "Bilinmiyor";
 
 function render(items) {
   if (!items.length) {
-    grid.innerHTML = `<div class="empty"><div class="empty-mark">S</div><h3>${coins.length ? "Eşleşen parça bulunamadı" : "Arşiv ilk parçasını bekliyor"}</h3><p>${coins.length ? "Arama veya filtreyi değiştirebilirsiniz." : "Yönetici panelinden ilk sikkenizi ekleyin."}</p></div>`;
+    grid.innerHTML = `<div class="empty"><div class="empty-mark"><img src="icon.svg" alt="" aria-hidden="true"></div><h3>${coins.length ? "Eşleşen parça bulunamadı" : "Arşiv ilk parçasını bekliyor"}</h3><p>${coins.length ? "Arama veya filtreyi değiştirebilirsiniz." : "Yönetici panelinden ilk sikkenizi ekleyin."}</p></div>`;
     return;
   }
   grid.innerHTML = items.map(coin => `
     <article class="coin-card" tabindex="0" data-id="${clean(coin.id)}" aria-label="${clean(coin.title || "İsimsiz sikke")} ayrıntılarını aç">
       <div class="coin-photo">
-        ${coin.frontImage ? `<img src="${clean(coin.frontImage)}" alt="${clean(coin.title || "Sikke")} ön yüzü" loading="lazy">` : `<div class="coin-placeholder">S</div>`}
+        ${coin.frontImage ? `<img src="${clean(coin.frontImage)}" alt="${clean(coin.title || "Sikke")} ön yüzü" loading="lazy">` : `<div class="coin-placeholder"><img src="icon.svg" alt="" aria-hidden="true"></div>`}
         <span class="tag">${clean(coin.status || "Arşivde")}</span>
       </div>
       <div class="card-body"><h3>${clean(coin.title || "Tanımlanmayı bekliyor")}</h3><div class="meta"><span>${clean(known(coin.country))}</span><span>${clean(known(coin.year))}</span><span>${clean(known(coin.denomination))}</span></div></div>
@@ -26,7 +26,7 @@ function showDetail(coin) {
   if (!coin) return;
   const face = (src, label) => `
     <figure class="detail-face">
-      <div class="detail-image">${src ? `<img src="${clean(src)}" alt="${clean(coin.title || "Sikke")} ${label.toLocaleLowerCase("tr")}">` : `<div class="coin-placeholder" aria-hidden="true">S</div>`}</div>
+      <div class="detail-image">${src ? `<img src="${clean(src)}" alt="${clean(coin.title || "Sikke")} ${label.toLocaleLowerCase("tr")}">` : `<div class="coin-placeholder" aria-hidden="true"><img src="icon.svg" alt=""></div>`}</div>
       <figcaption>${label}${src ? "" : " fotoğrafı henüz eklenmedi"}</figcaption>
     </figure>`;
   document.querySelector("#coinDetail").innerHTML = `
