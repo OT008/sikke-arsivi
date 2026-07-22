@@ -5,12 +5,13 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
   <title>Yönetim · Sikke Arşivi</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
   <script src="config.js" defer></script>
   <script src="admin.js" defer></script>
 </head>
-<body class="admin-page theme-purple">
-  <header class="topbar"><nav class="wrap nav"><a class="brand" href="index.html"><span class="brand-mark">S</span>Sikke Arşivi</a><a class="nav-link" href="index.html">← Arşive dön</a></nav></header>
+<body class="admin-page theme-red">
+  <header class="topbar"><nav class="wrap nav"><a class="brand" href="index.html"><img class="brand-logo" src="icon.svg" alt="">Sikke Arşivi</a><a class="nav-link" href="index.html">← Arşive dön</a></nav></header>
   <main class="admin-shell">
     <section id="loginPanel" class="panel">
       <div class="eyebrow">Yalnızca yönetici</div><h1>Arşiv yönetimi</h1>
@@ -48,9 +49,14 @@
       <section class="manager" aria-labelledby="managerTitle">
         <div class="manager-heading">
           <div><div class="eyebrow">Arşiv yönetimi</div><h2 id="managerTitle">Eklenen paralar</h2></div>
-          <button id="refreshCoinsButton" class="button secondary compact" type="button">Listeyi yenile</button>
+          <div class="manager-actions">
+            <button id="refreshCoinsButton" class="button secondary compact" type="button">Listeyi yenile</button>
+            <button id="beginDeleteButton" class="button danger compact" type="button">Sil</button>
+            <button id="confirmDeleteButton" class="button danger compact hidden" type="button" disabled>Silmeyi onayla</button>
+            <button id="cancelDeleteButton" class="button secondary compact hidden" type="button">Vazgeç</button>
+          </div>
         </div>
-        <p class="subtle">Bilgileri veya fotoğrafları değiştirmek için Düzenle'yi kullanın. Değiştirilen eski fotoğraf depodan otomatik kaldırılır.</p>
+        <p id="managerHelp" class="subtle">Bilgileri veya fotoğrafları değiştirmek için Düzenle'yi kullanın. Değiştirilen eski fotoğraf depodan otomatik kaldırılır.</p>
         <div id="managerNotice" class="notice hidden" role="status"></div>
         <div id="adminCoinList" class="admin-coin-list" aria-live="polite"></div>
       </section>
