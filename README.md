@@ -22,7 +22,7 @@ Yayınlanan sitenin `admin.html` sayfasını açın, erişim anahtarınızı gir
 
 ### Kayıt düzenleme ve silme
 
-Yönetici girişi yaptıktan sonra **Eklenen paralar** bölümünden bir kaydı düzenleyebilir veya silebilirsiniz. Düzenlerken yalnızca değiştirmek istediğiniz yüzün yeni fotoğrafını seçmeniz yeterlidir; yeni fotoğraf kayda bağlandıktan sonra eski dosya otomatik silinir. Silme işlemi kaydı `data/coins.json` dosyasından kaldırır ve o kayda ait ön/arka yüz görsellerini de siler.
+Yönetici girişi yaptıktan sonra **Eklenen paralar** bölümünden bir kaydı düzenleyebilirsiniz. Düzenlerken yalnızca değiştirmek istediğiniz yüzün yeni fotoğrafını seçmeniz yeterlidir; yeni fotoğraf kayda bağlandıktan sonra eski dosya otomatik silinir. Bir veya birden fazla kayıt silmek için **Sil** düğmesiyle seçim modunu açın, kayıtları işaretleyin ve **Silmeyi onayla** düğmesine basın. **Vazgeç** düğmesi seçim yapmadan normal görünüme döner. Seçilen kayıtlar `data/coins.json` dosyasından tek güncellemede kaldırılır ve bunlara ait ön/arka yüz görselleri de silinir.
 
 ## Tema seçimi
 
