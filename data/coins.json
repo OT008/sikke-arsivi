@@ -1,5 +1,18 @@
 [
   {
+    "id": "2026-07-22-b9df3a54",
+    "title": "Almanya - 2 Deutsche Mark",
+    "country": "Almanya",
+    "year": "1973",
+    "denomination": "2 Alman Markı",
+    "material": "Bakır-nikel alaşımı",
+    "status": "Tanımlandı",
+    "notes": "Hediye - 2026",
+    "frontImage": "images/coins/2026-07-22-b9df3a54-on.webp",
+    "backImage": "images/coins/2026-07-22-b9df3a54-arka.webp",
+    "addedAt": "2026-07-22T15:47:02.900Z"
+  },
+  {
     "id": "2026-07-22-18cdd62a",
     "title": "Bosna-Hersek - 50 Feninga",
     "country": "Bosna-Hersek",
