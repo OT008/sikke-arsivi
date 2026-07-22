@@ -142,6 +142,14 @@ h1 { max-width: 760px; margin: 14px 0 18px; font-size: clamp(46px, 8vw, 88px); l
 .panel + .panel { margin-top: 20px; }
 .panel h1 { margin: 8px 0 12px; font-size: clamp(38px, 7vw, 60px); }
 .panel h2 { margin: 0 0 6px; font-size: 28px; }
+.login-panel { width: min(500px, 100%); margin: 58px auto 80px; padding: clamp(28px, 6vw, 46px); text-align: center; }
+.login-logo { width: 66px; height: 66px; display: block; margin: 0 auto 20px; }
+.login-panel h1 { margin: 8px 0 10px; font-size: clamp(36px, 7vw, 48px); line-height: 1; }
+.login-copy { margin: 0; color: var(--color-text-muted); font-size: 14px; line-height: 1.6; }
+.login-form { display: grid; gap: 14px; margin-top: 28px; text-align: left; }
+.login-form .field { min-height: 48px; }
+.login-button { width: 100%; margin-top: 2px; }
+.login-panel .notice { margin-top: 0; padding: 10px 12px; text-align: center; }
 .subtle { color: var(--color-text-muted); line-height: 1.6; }
 .section-heading { margin-bottom: 24px; }
 .section-heading .subtle { margin-bottom: 0; }
