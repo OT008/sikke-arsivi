@@ -1,5 +1,18 @@
 [
   {
+    "id": "2026-07-22-21b69d17",
+    "title": "Almanya - 2 Euro Cent",
+    "country": "Almanya",
+    "year": "2018",
+    "denomination": "2 Euro Cent",
+    "material": "Bakır kaplamalı çelik",
+    "status": "Tanımlandı",
+    "notes": "Hediye - 2026",
+    "frontImage": "images/coins/2026-07-22-21b69d17-on.webp",
+    "backImage": "images/coins/2026-07-22-21b69d17-arka.webp",
+    "addedAt": "2026-07-22T16:54:26.745Z"
+  },
+  {
     "id": "2026-07-22-5b50ab5b",
     "title": "Almanya - 1 Euro",
     "country": "Almanya",
