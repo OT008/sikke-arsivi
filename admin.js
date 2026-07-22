@@ -12,8 +12,16 @@ const coinForm = document.querySelector("#coinForm");
 const saveButton = document.querySelector("#saveButton");
 const frontImageInput = document.querySelector("#frontImage");
 const backImageInput = document.querySelector("#backImage");
+const refreshCoinsButton = document.querySelector("#refreshCoinsButton");
+const beginDeleteButton = document.querySelector("#beginDeleteButton");
+const confirmDeleteButton = document.querySelector("#confirmDeleteButton");
+const cancelDeleteButton = document.querySelector("#cancelDeleteButton");
+const managerHelp = document.querySelector("#managerHelp");
 let adminCoins = [];
 let editingCoinId = "";
+let deleteSelectionMode = false;
+let deleteOperationBusy = false;
+const selectedCoinIds = new Set();
 const previewObjectUrls = new Map();
 
 const clean = (value) => String(value ?? "").replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
@@ -199,15 +207,16 @@ function renderAdminCoins() {
     return;
   }
   adminCoinList.innerHTML = adminCoins.map(coin => `
-    <article class="admin-coin-row${coin.id === editingCoinId ? " is-editing" : ""}" data-id="${clean(coin.id)}">
-      <div class="admin-coin-thumb">${coin.frontImage ? `<img src="${clean(coin.frontImage)}" alt="">` : `<span>S</span>`}</div>
+    <article class="admin-coin-row${coin.id === editingCoinId ? " is-editing" : ""}${selectedCoinIds.has(coin.id) ? " is-selected" : ""}" data-id="${clean(coin.id)}"${deleteSelectionMode ? ` aria-selected="${selectedCoinIds.has(coin.id)}"` : ""}>
+      <div class="admin-coin-thumb"><img src="${coin.frontImage ? clean(coin.frontImage) : "icon.svg"}" alt=""></div>
       <div class="admin-coin-copy">
         <strong>${clean(coin.title || "Tanımlanmayı bekliyor")}</strong>
         <span>${clean([coin.country, coin.year, coin.denomination].filter(Boolean).join(" · ") || "Bilgi eklenmemiş")}</span>
       </div>
       <div class="admin-row-actions">
-        <button class="edit-button" type="button" data-edit-id="${clean(coin.id)}" aria-label="${clean(coin.title || "Bu kaydı")} düzenle">Düzenle</button>
-        <button class="delete-button" type="button" data-delete-id="${clean(coin.id)}" aria-label="${clean(coin.title || "Bu kaydı")} sil">Sil</button>
+        ${deleteSelectionMode
+          ? `<label class="coin-select"><input type="checkbox" data-select-id="${clean(coin.id)}" aria-label="${clean(coin.title || "Bu kaydı")} silmek için seç"${selectedCoinIds.has(coin.id) ? " checked" : ""}${deleteOperationBusy ? " disabled" : ""}><span>${selectedCoinIds.has(coin.id) ? "Seçildi" : "Seç"}</span></label>`
+          : `<button class="edit-button" type="button" data-edit-id="${clean(coin.id)}" aria-label="${clean(coin.title || "Bu kaydı")} düzenle">Düzenle</button>`}
       </div>
     </article>`).join("");
 }
@@ -237,34 +246,63 @@ async function deleteRepoFile(path, message) {
   });
 }
 
-async function deleteCoin(coin, button) {
-  if (!coin || !window.confirm(`“${coin.title || "Bu kayıt"}” arşivden ve görselleriyle birlikte kalıcı olarak silinsin mi?`)) return;
-  button.disabled = true;
-  setNotice(managerNotice, "Kayıt siliniyor…");
+function updateDeleteControls() {
+  beginDeleteButton.classList.toggle("hidden", deleteSelectionMode);
+  confirmDeleteButton.classList.toggle("hidden", !deleteSelectionMode);
+  cancelDeleteButton.classList.toggle("hidden", !deleteSelectionMode);
+  refreshCoinsButton.disabled = deleteSelectionMode;
+  confirmDeleteButton.disabled = deleteOperationBusy || selectedCoinIds.size === 0;
+  cancelDeleteButton.disabled = deleteOperationBusy;
+  confirmDeleteButton.textContent = selectedCoinIds.size ? `Silmeyi onayla (${selectedCoinIds.size})` : "Silmeyi onayla";
+  managerHelp.textContent = deleteSelectionMode
+    ? "Silmek istediğiniz paraları listeden seçin. Seçiminiz bittiğinde Silmeyi onayla'ya basın veya işlemden çıkmak için Vazgeç'i kullanın."
+    : "Bilgileri veya fotoğrafları değiştirmek için Düzenle'yi kullanın. Değiştirilen eski fotoğraf depodan otomatik kaldırılır.";
+}
+
+function setDeleteSelectionMode(enabled, keepNotice = false) {
+  if (enabled && editingCoinId) setEditMode(false);
+  deleteSelectionMode = enabled;
+  if (!enabled) deleteOperationBusy = false;
+  selectedCoinIds.clear();
+  updateDeleteControls();
+  renderAdminCoins();
+  if (!keepNotice) managerNotice.className = "notice hidden";
+}
+
+async function deleteSelectedCoins() {
+  if (!selectedCoinIds.size) return;
+  const idsToDelete = new Set(selectedCoinIds);
+  deleteOperationBusy = true;
+  updateDeleteControls();
+  renderAdminCoins();
+  setNotice(managerNotice, `${idsToDelete.size} kayıt siliniyor…`);
   try {
     const current = await getJsonFile("data/coins.json");
     const currentCoins = Array.isArray(current.data) ? current.data : [];
-    const updatedCoins = currentCoins.filter(item => item.id !== coin.id);
-    if (updatedCoins.length === currentCoins.length) throw new Error("Kayıt arşivde bulunamadı; listeyi yenileyip tekrar deneyin");
+    const coinsToDelete = currentCoins.filter(coin => idsToDelete.has(coin.id));
+    if (!coinsToDelete.length) throw new Error("Seçilen kayıtlar arşivde bulunamadı; listeyi yenileyip tekrar deneyin");
+    const updatedCoins = currentCoins.filter(coin => !idsToDelete.has(coin.id));
 
     const encoded = await toBase64(new Blob([JSON.stringify(updatedCoins, null, 2) + "\n"], { type: "application/json" }));
-    await putFile("data/coins.json", encoded, `Arşivden sikke sil: ${coin.title || coin.id}`, current.sha);
+    await putFile("data/coins.json", encoded, `Arşivden ${coinsToDelete.length} sikke sil`, current.sha);
 
     const imageErrors = [];
-    const imagePaths = [...new Set([coin.frontImage, coin.backImage].filter(isManagedImage))];
+    const imagePaths = [...new Set(coinsToDelete.flatMap(coin => [coin.frontImage, coin.backImage]).filter(isManagedImage))];
     for (const path of imagePaths) {
-      try { await deleteRepoFile(path, `Silinen sikkenin görselini kaldır: ${coin.id}`); }
+      try { await deleteRepoFile(path, `Toplu silinen sikke görselini kaldır`); }
       catch (error) { imageErrors.push(error.message); }
     }
 
     adminCoins = updatedCoins;
-    if (editingCoinId === coin.id) setEditMode(false);
-    else renderAdminCoins();
-    if (imageErrors.length) setNotice(managerNotice, "Kayıt silindi; ancak görsel dosyalarından biri depoda kalmış olabilir.", "warning");
-    else setNotice(managerNotice, "Kayıt ve ön/arka yüz görselleri başarıyla silindi.", "success");
+    deleteOperationBusy = false;
+    setDeleteSelectionMode(false, true);
+    if (imageErrors.length) setNotice(managerNotice, `${coinsToDelete.length} kayıt silindi; ancak görsel dosyalarından biri depoda kalmış olabilir.`, "warning");
+    else setNotice(managerNotice, `${coinsToDelete.length} kayıt ve bunlara ait ön/arka yüz görselleri başarıyla silindi.`, "success");
   } catch (error) {
-    setNotice(managerNotice, `Silme işlemi tamamlanamadı: ${error.message}`, "error");
-    button.disabled = false;
+    deleteOperationBusy = false;
+    updateDeleteControls();
+    renderAdminCoins();
+    setNotice(managerNotice, `Toplu silme işlemi tamamlanamadı: ${error.message}`, "error");
   }
 }
 
@@ -272,14 +310,22 @@ adminCoinList.addEventListener("click", event => {
   const editButton = event.target.closest("[data-edit-id]");
   if (editButton) {
     startEditingCoin(adminCoins.find(coin => coin.id === editButton.dataset.editId));
-    return;
   }
-  const deleteButton = event.target.closest("[data-delete-id]");
-  if (!deleteButton) return;
-  deleteCoin(adminCoins.find(coin => coin.id === deleteButton.dataset.deleteId), deleteButton);
 });
 
-document.querySelector("#refreshCoinsButton").addEventListener("click", loadAdminCoins);
+adminCoinList.addEventListener("change", event => {
+  const checkbox = event.target.closest("[data-select-id]");
+  if (!checkbox || !deleteSelectionMode || deleteOperationBusy) return;
+  if (checkbox.checked) selectedCoinIds.add(checkbox.dataset.selectId);
+  else selectedCoinIds.delete(checkbox.dataset.selectId);
+  updateDeleteControls();
+  renderAdminCoins();
+});
+
+beginDeleteButton.addEventListener("click", () => setDeleteSelectionMode(true));
+cancelDeleteButton.addEventListener("click", () => setDeleteSelectionMode(false));
+confirmDeleteButton.addEventListener("click", deleteSelectedCoins);
+refreshCoinsButton.addEventListener("click", loadAdminCoins);
 
 coinForm.addEventListener("submit", async event => {
   event.preventDefault();
@@ -347,5 +393,5 @@ coinForm.addEventListener("submit", async event => {
   finally { saveButton.disabled = false; }
 });
 
-document.querySelector("#logoutButton").addEventListener("click", () => { githubToken = ""; setEditMode(false); editorPanel.classList.add("hidden"); loginPanel.classList.remove("hidden"); setNotice(loginNotice, "Güvenli şekilde çıkış yapıldı.", "success"); });
+document.querySelector("#logoutButton").addEventListener("click", () => { githubToken = ""; setDeleteSelectionMode(false); setEditMode(false); editorPanel.classList.add("hidden"); loginPanel.classList.remove("hidden"); setNotice(loginNotice, "Güvenli şekilde çıkış yapıldı.", "success"); });
 window.addEventListener("pagehide", () => { githubToken = ""; });
