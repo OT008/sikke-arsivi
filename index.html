@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Tarihin sessiz tanıkları: kişisel sikke ve para koleksiyonu.">
+  <title>Sikke Arşivi</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="config.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body class="theme-purple">
+  <header class="topbar">
+    <nav class="wrap nav" aria-label="Ana menü">
+      <a class="brand" href="index.html"><span class="brand-mark">S</span>Sikke Arşivi</a>
+      <a class="nav-link" href="admin.html">Yönetici girişi</a>
+    </nav>
+  </header>
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <div class="eyebrow">Kişisel Nümismatik Koleksiyonu</div>
+        <h1>Tarihin sessiz tanıkları.</h1>
+        <p class="lead">Farklı coğrafyalardan, dönemlerden ve hikâyelerden bir araya gelen paraların dijital arşivi.</p>
+        <div class="stats" aria-label="Koleksiyon özeti">
+          <div class="stat"><strong id="totalCount">0</strong><span>Parça</span></div>
+          <div class="stat"><strong id="countryCount">0</strong><span>Ülke</span></div>
+          <div class="stat"><strong id="oldestYear">—</strong><span>En eski</span></div>
+        </div>
+      </div>
+    </section>
+    <section class="collection">
+      <div class="wrap">
+        <div class="toolbar">
+          <div><h2>Koleksiyon</h2><p>Arşivdeki parçaları yakından inceleyin.</p></div>
+          <div class="filters">
+            <input id="search" class="search" type="search" placeholder="Ülke, yıl veya isim ara…" aria-label="Koleksiyonda ara">
+            <select id="countryFilter" class="field" aria-label="Ülkeye göre filtrele"><option value="">Tüm ülkeler</option></select>
+          </div>
+        </div>
+        <div id="coinGrid" class="grid" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+  <footer class="footer"><div class="wrap">© <span id="year"></span> Sikke Arşivi · Kişisel koleksiyon</div></footer>
+  <dialog id="coinDialog" class="dialog" aria-label="Sikke ayrıntıları">
+    <button class="dialog-close" type="button" aria-label="Kapat">✕</button>
+    <div id="coinDetail"></div>
+  </dialog>
+</body>
+</html>
