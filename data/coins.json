@@ -1,5 +1,18 @@
 [
   {
+    "id": "2026-07-22-ee50762d",
+    "title": "Sırbistan - 1 Dinar",
+    "country": "Sırbistan",
+    "year": "2023",
+    "denomination": "1 Sırp Dinarı",
+    "material": "Pirinç kaplamalı çelik",
+    "status": "Tanımlandı",
+    "notes": "Mustafa ŞAHİN\nHediye - 2026",
+    "frontImage": "images/coins/2026-07-22-ee50762d-on.webp",
+    "backImage": "images/coins/2026-07-22-ee50762d-arka.webp",
+    "addedAt": "2026-07-22T15:57:07.384Z"
+  },
+  {
     "id": "2026-07-22-ad796394",
     "title": "Almanya - 10 Pfennig",
     "country": "Almanya",
