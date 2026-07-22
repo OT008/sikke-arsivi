@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "id": "2026-07-22-b1fa2545",
+    "title": "10 Feninga",
+    "country": "Bosna Hersek",
+    "year": "2021",
+    "denomination": "10 Feninga",
+    "material": "Bakır Kaplı Çelik",
+    "status": "Tanımlandı",
+    "notes": "ModMuck Hediyesi",
+    "frontImage": "images/coins/2026-07-22-b1fa2545-on.webp",
+    "backImage": "images/coins/2026-07-22-b1fa2545-arka.webp",
+    "addedAt": "2026-07-22T09:35:15.214Z"
+  }
+]
