@@ -64,6 +64,12 @@
   --color-primary-hover: #C27E9F;
   --color-primary-dark: #B56E90;
 }
+.theme-red {
+  --color-primary: #C75C68;
+  --color-primary-light: #F9E3E6;
+  --color-primary-hover: #B84F5C;
+  --color-primary-dark: #A3424D;
+}
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body { margin: 0; color: var(--color-text-primary); background: var(--color-surface); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
@@ -74,7 +80,7 @@ a { color: inherit; }
 .topbar { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.92); backdrop-filter: blur(18px); border-bottom: 1px solid var(--color-border); }
 .nav { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .brand { display: inline-flex; align-items: center; gap: 11px; text-decoration: none; font-family: Georgia, "Times New Roman", serif; font-size: 21px; letter-spacing: .02em; }
-.brand-mark { width: 34px; aspect-ratio: 1; display: grid; place-items: center; border: 1px solid var(--color-primary); border-radius: 50%; color: var(--color-primary-dark); background: var(--color-primary-light); font-family: Georgia, serif; box-shadow: inset 0 0 0 4px var(--color-surface); }
+.brand-logo { width: 38px; height: 38px; display: block; flex: 0 0 auto; }
 .nav-link { border: 0; background: none; color: var(--color-text-muted); text-decoration: none; font-size: 14px; cursor: pointer; }
 .nav-link:hover { color: var(--color-primary-dark); }
 .hero { padding: 84px 0 56px; border-bottom: 1px solid var(--color-border); background: radial-gradient(circle at 82% 25%, var(--color-primary-light) 0, transparent 29%), linear-gradient(var(--color-surface), var(--color-bg)); }
@@ -101,13 +107,15 @@ h1 { max-width: 760px; margin: 14px 0 18px; font-size: clamp(46px, 8vw, 88px); l
 .coin-card:focus-visible { outline: 3px solid var(--color-primary-light); border-color: var(--color-primary); }
 .coin-photo { position: relative; aspect-ratio: 1; display: grid; place-items: center; overflow: hidden; background: var(--color-surface-secondary); border-bottom: 1px solid var(--color-border); }
 .coin-photo img { width: 100%; height: 100%; object-fit: contain; object-position: center; }
-.coin-placeholder { width: 42%; aspect-ratio: 1; border: 1px solid var(--color-primary); border-radius: 50%; display: grid; place-items: center; color: var(--color-primary-dark); background: var(--color-primary-light); font: 28px Georgia, serif; box-shadow: inset 0 0 0 8px var(--color-surface); }
+.coin-placeholder { width: 42%; aspect-ratio: 1; display: grid; place-items: center; }
+.coin-placeholder img { width: 100%; height: 100%; display: block; object-fit: contain; }
 .tag { position: absolute; top: 14px; left: 14px; padding: 7px 10px; border-radius: 99px; background: rgba(255,255,255,.92); border: 1px solid var(--color-border); color: var(--color-text-secondary); font-size: 11px; backdrop-filter: blur(8px); }
 .card-body { padding: 20px; }
 .card-body h3 { margin: 0 0 9px; font-size: 22px; }
 .meta { display: flex; flex-wrap: wrap; gap: 7px 13px; color: var(--color-text-muted); font-size: 13px; }
 .empty { grid-column: 1/-1; padding: 72px 20px; text-align: center; border: 1px dashed var(--color-border-strong); border-radius: var(--radius); background: var(--color-surface-secondary); }
-.empty-mark { width: 92px; aspect-ratio: 1; margin: 0 auto 18px; display: grid; place-items: center; border: 1px solid var(--color-primary); border-radius: 50%; color: var(--color-primary-dark); background: var(--color-primary-light); font: 40px Georgia, serif; }
+.empty-mark { width: 92px; aspect-ratio: 1; margin: 0 auto 18px; }
+.empty-mark img { width: 100%; height: 100%; display: block; }
 .empty h3 { margin: 0 0 8px; font-size: 25px; }
 .empty p { margin: 0; color: var(--color-text-muted); }
 .footer { padding: 30px 0; color: var(--color-text-muted); border-top: 1px solid var(--color-border); font-size: 13px; }
@@ -152,6 +160,8 @@ textarea.field { min-height: 105px; resize: vertical; }
 .button:disabled { opacity: .5; cursor: wait; }
 .button.secondary { color: var(--color-text-primary); background: var(--color-surface); border-color: var(--color-border); }
 .button.secondary:hover { background: var(--color-surface-hover); border-color: var(--color-border-strong); }
+.button.danger { border-color: var(--color-error); background: var(--color-error); color: var(--color-text-on-primary); }
+.button.danger:hover { filter: brightness(.92); }
 .button.compact { min-height: 38px; padding: 0 13px; font-size: 12px; }
 .notice { margin-top: 16px; padding: 13px 15px; border-radius: 12px; background: var(--color-info-light); color: var(--color-info); font-size: 13px; line-height: 1.5; }
 .notice.error { background: var(--color-error-light); color: var(--color-error); }
@@ -163,10 +173,12 @@ textarea.field { min-height: 105px; resize: vertical; }
 .preview img { width: 100%; height: 100%; object-fit: contain; object-position: center; background: var(--color-surface); }
 .manager { margin-top: 42px; padding-top: 34px; border-top: 1px solid var(--color-border); }
 .manager-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; }
+.manager-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 .manager .subtle { margin: 10px 0 0; }
 .admin-coin-list { display: grid; gap: 10px; margin-top: 18px; }
 .admin-coin-row { display: grid; grid-template-columns: 64px 1fr auto; gap: 14px; align-items: center; padding: 10px; border: 1px solid var(--color-border); border-radius: 14px; background: var(--color-surface); }
 .admin-coin-row.is-editing { border-color: var(--color-primary); background: var(--color-primary-light); }
+.admin-coin-row.is-selected { border-color: var(--color-error); background: var(--color-error-light); box-shadow: inset 4px 0 0 var(--color-error); }
 .admin-coin-thumb { width: 64px; aspect-ratio: 1; display: grid; place-items: center; overflow: hidden; border-radius: 10px; background: var(--color-surface-secondary); color: var(--color-primary-dark); font: 22px Georgia, serif; }
 .admin-coin-thumb img { width: 100%; height: 100%; object-fit: contain; }
 .admin-coin-copy { min-width: 0; }
@@ -174,12 +186,14 @@ textarea.field { min-height: 105px; resize: vertical; }
 .admin-coin-copy strong { font-size: 14px; }
 .admin-coin-copy span { margin-top: 5px; color: var(--color-text-muted); font-size: 12px; }
 .admin-row-actions { display: flex; gap: 8px; }
-.edit-button, .delete-button { min-height: 38px; padding: 0 14px; border-radius: 10px; background: var(--color-surface); font-weight: 700; cursor: pointer; }
-.edit-button { border: 1px solid var(--color-primary); color: var(--color-primary-dark); }
-.edit-button:hover { background: var(--color-primary-light); }
-.delete-button { border: 1px solid var(--color-error); color: var(--color-error); }
+.admin-row-actions > button { appearance: none; display: inline-flex; align-items: center; justify-content: center; min-height: 38px; padding: 0 14px; border-radius: 10px; font: inherit; font-size: 14px; font-weight: 700; line-height: 1; cursor: pointer; }
+.edit-button { border: 1px solid var(--color-primary); background: var(--color-primary); color: var(--color-text-on-primary); }
+.edit-button:hover { border-color: var(--color-primary-hover); background: var(--color-primary-hover); }
+.delete-button { border: 1px solid var(--color-error); background: var(--color-surface); color: var(--color-error); }
 .delete-button:hover { background: var(--color-error-light); }
 .edit-button:disabled, .delete-button:disabled { opacity: .5; cursor: wait; }
+.coin-select { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 38px; padding: 0 13px; border: 1px solid var(--color-error); border-radius: 10px; background: var(--color-surface); color: var(--color-error); font-size: 13px; font-weight: 700; cursor: pointer; }
+.coin-select input { width: 18px; height: 18px; margin: 0; accent-color: var(--color-error); cursor: pointer; }
 .manager-empty { padding: 28px; border: 1px dashed var(--color-border-strong); border-radius: 14px; background: var(--color-surface-secondary); color: var(--color-text-muted); text-align: center; }
 @media (max-width: 800px) {
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -200,6 +214,7 @@ textarea.field { min-height: 105px; resize: vertical; }
   .detail-info h2 { font-size: 31px; }
   .manager-heading { align-items: start; flex-direction: column; }
   .manager-heading .button { width: 100%; }
+  .manager-actions { width: 100%; display: grid; grid-template-columns: 1fr 1fr; }
   .admin-coin-row { grid-template-columns: 54px 1fr; gap: 10px; }
   .admin-coin-thumb { width: 54px; }
   .admin-row-actions { grid-column: 1/-1; display: grid; grid-template-columns: 1fr 1fr; }
