@@ -23,19 +23,30 @@ function render(items) {
 }
 
 function showDetail(coin) {
+  if (!coin) return;
+  const face = (src, label) => `
+    <figure class="detail-face">
+      <div class="detail-image">${src ? `<img src="${clean(src)}" alt="${clean(coin.title || "Sikke")} ${label.toLocaleLowerCase("tr")}">` : `<div class="coin-placeholder" aria-hidden="true">S</div>`}</div>
+      <figcaption>${label}${src ? "" : " fotoğrafı henüz eklenmedi"}</figcaption>
+    </figure>`;
   document.querySelector("#coinDetail").innerHTML = `
-    <div class="detail"><div class="detail-image">${coin.frontImage ? `<img src="${clean(coin.frontImage)}" alt="${clean(coin.title)}">` : `<div class="coin-placeholder">S</div>`}</div>
-    <div class="detail-info"><div class="eyebrow">${clean(coin.status || "Arşivde")}</div><h2>${clean(coin.title || "Tanımlanmayı bekliyor")}</h2>
+    <article class="detail">
+      <div class="detail-gallery">${face(coin.frontImage, "Ön yüz")}${face(coin.backImage, "Arka yüz")}</div>
+      <div class="detail-info"><div class="eyebrow">${clean(coin.status || "Arşivde")}</div><h2>${clean(coin.title || "Tanımlanmayı bekliyor")}</h2>
       <div class="detail-list"><div><span>Ülke</span><strong>${clean(known(coin.country))}</strong></div><div><span>Yıl</span><strong>${clean(known(coin.year))}</strong></div><div><span>Değer</span><strong>${clean(known(coin.denomination))}</strong></div><div><span>Malzeme</span><strong>${clean(known(coin.material))}</strong></div></div>
-      ${coin.backImage ? `<p><a href="${clean(coin.backImage)}" target="_blank" rel="noopener">Arka yüz fotoğrafını aç →</a></p>` : ""}
-      <p class="detail-note">${clean(coin.notes || "Bu parça hakkındaki bilgiler henüz araştırılıyor.")}</p></div></div>`;
+      <p class="detail-note">${clean(coin.notes || "Bu parça hakkındaki bilgiler henüz araştırılıyor.")}</p></div>
+    </article>`;
   dialog.showModal();
 }
 
 function applyFilters() {
   const q = search.value.trim().toLocaleLowerCase("tr");
   const country = countryFilter.value;
-  render(coins.filter(c => (!country || c.country === country) && !q || (!country || c.country === country) && [c.title,c.country,c.year,c.denomination,c.material].join(" ").toLocaleLowerCase("tr").includes(q)));
+  render(coins.filter(c => {
+    const matchesCountry = !country || c.country === country;
+    const haystack = [c.title, c.country, c.year, c.denomination, c.material].join(" ").toLocaleLowerCase("tr");
+    return matchesCountry && (!q || haystack.includes(q));
+  }));
 }
 
 fetch(`data/coins.json?v=${Date.now()}`).then(r => {

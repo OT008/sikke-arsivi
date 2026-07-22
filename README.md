@@ -14,6 +14,20 @@ Veritabanı kullanmadan GitHub Pages üzerinde çalışan kişisel para koleksiy
 
 Yayınlanan sitenin `admin.html` sayfasını açın, erişim anahtarınızı girin ve fotoğrafları seçin. Anahtar hiçbir dosyada veya tarayıcı deposunda saklanmaz; sayfa kapanınca unutulur.
 
+### Fotoğraf standardı
+
+- Ön ve arka yüzü yüklemeden önce **1600 × 1600 px** kare hazırlayın.
+- Parayı ortalayın ve çevresinde yaklaşık **%8–10 boşluk** bırakın.
+- İki yüzde de aynı ölçeği kullanın. Site fotoğrafları kırpmaz; yalnızca gerekirse küçültüp WebP biçimine dönüştürür.
+
+### Kayıt silme
+
+Yönetici girişi yaptıktan sonra **Eklenen paralar** bölümünden bir kaydı silebilirsiniz. Silme işlemi kaydı `data/coins.json` dosyasından kaldırır ve o kayda ait ön/arka yüz görsellerini de siler.
+
+## Tema seçimi
+
+Varsayılan tema mordur. `index.html` ve `admin.html` içindeki `theme-purple` sınıfını `theme-blue`, `theme-mint` veya `theme-pink` ile değiştirerek yalnızca ana renkleri değiştirebilirsiniz; arka plan, metin, kenarlık ve durum renkleri sabit kalır.
+
 ## Güvenlik
 
 - Yönetici kullanıcı adı `config.js` içindeki adla sınırlandırılır.

@@ -1,6 +1,6 @@
 window.SIKKE_CONFIG = {
   // Buraya yalnızca kendi GitHub kullanıcı adınızı yazın.
-  adminUsername: "OT008",
+  adminUsername: "asanahaaratas",
   repository: "sikke-arsivi",
   branch: "main"
 };
