@@ -1,15 +1,16 @@
 [
   {
     "id": "2026-07-22-a9e3b838",
-    "title": "Tanımlanmayı bekliyor",
+    "title": "Bosna-Hersek - 5 Feninga",
     "country": "",
-    "year": "",
-    "denomination": "",
-    "material": "",
-    "status": "Tanımlanmayı bekliyor",
-    "notes": "",
+    "year": "2017",
+    "denomination": "5 Feninga",
+    "material": "Nikel kaplamalı çelik",
+    "status": "Tanımlandı",
+    "notes": "Muhammet Numan Topcu Hediye-2026",
     "frontImage": "images/coins/2026-07-22-a9e3b838-on.webp",
     "backImage": "images/coins/2026-07-22-a9e3b838-arka.webp",
-    "addedAt": "2026-07-22T15:30:31.157Z"
+    "addedAt": "2026-07-22T15:30:31.157Z",
+    "updatedAt": "2026-07-22T15:35:00.725Z"
   }
 ]
