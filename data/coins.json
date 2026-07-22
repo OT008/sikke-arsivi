@@ -1,5 +1,18 @@
 [
   {
+    "id": "2026-07-22-893c759c",
+    "title": "Hırvatistan - 1 Euro Cent",
+    "country": "Hırvatistan",
+    "year": "2023",
+    "denomination": "1 Euro Cent",
+    "material": "Bakır kaplamalı çelik",
+    "status": "Tanımlandı",
+    "notes": "Hediye - 2026",
+    "frontImage": "images/coins/2026-07-22-893c759c-on.webp",
+    "backImage": "images/coins/2026-07-22-893c759c-arka.webp",
+    "addedAt": "2026-07-22T17:00:24.210Z"
+  },
+  {
     "id": "2026-07-22-d4e702f9",
     "title": "Almanya - 1 Euro Cent",
     "country": "Almanya",
