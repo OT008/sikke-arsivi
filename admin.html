@@ -13,13 +13,15 @@
 <body class="admin-page theme-red">
   <header class="topbar"><nav class="wrap nav"><a class="brand" href="index.html"><img class="brand-logo" src="icon.svg" alt="">Sikke Arşivi</a><a class="nav-link" href="index.html">← Arşive dön</a></nav></header>
   <main class="admin-shell">
-    <section id="loginPanel" class="panel">
-      <div class="eyebrow">Yalnızca yönetici</div><h1>Arşiv yönetimi</h1>
-      <p class="subtle">GitHub erişim anahtarınız sadece bu sekmenin belleğinde tutulur; site dosyalarına veya tarayıcı kaydına yazılmaz.</p>
-      <form id="loginForm">
-        <label>GitHub erişim anahtarı<input id="token" class="field" type="password" autocomplete="off" required placeholder="github_pat_…"></label>
-        <div class="actions"><button class="button" type="submit">Güvenli giriş</button></div>
-        <div id="loginNotice" class="notice">Anahtarın yalnızca <strong>Contents: Read and write</strong> yetkisiyle, bu depoya özel oluşturulması önerilir.</div>
+    <section id="loginPanel" class="panel login-panel">
+      <img class="login-logo" src="icon.svg" alt="">
+      <div class="eyebrow">Yönetici girişi</div>
+      <h1>Arşivi yönet</h1>
+      <p class="login-copy">Devam etmek için GitHub anahtarınızı girin.</p>
+      <form id="loginForm" class="login-form">
+        <label>Erişim anahtarı<input id="token" class="field" type="password" autocomplete="off" required placeholder="github_pat_…"></label>
+        <button class="button login-button" type="submit">Giriş yap</button>
+        <div id="loginNotice" class="notice" role="status">Anahtar yalnızca bu sekmede tutulur.</div>
       </form>
     </section>
     <section id="editorPanel" class="panel hidden">
