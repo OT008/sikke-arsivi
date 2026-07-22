@@ -2,10 +2,20 @@ const grid = document.querySelector("#coinGrid");
 const search = document.querySelector("#search");
 const countryFilter = document.querySelector("#countryFilter");
 const dialog = document.querySelector("#coinDialog");
+const config = window.SIKKE_CONFIG;
+const encodedBranchPath = String(config?.branch || "main").split("/").map(encodeURIComponent).join("/");
+const rawBase = config?.adminUsername && config?.repository
+  ? `https://raw.githubusercontent.com/${encodeURIComponent(config.adminUsername)}/${encodeURIComponent(config.repository)}/${encodedBranchPath}/`
+  : "";
 let coins = [];
 
 const clean = (value) => String(value ?? "").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
 const known = value => value || "Bilinmiyor";
+const rawFileUrl = path => {
+  const value = String(path || "");
+  if (!value || /^(?:https?:|data:|blob:)/i.test(value) || !rawBase) return value;
+  return `${rawBase}${value.split("/").map(encodeURIComponent).join("/")}`;
+};
 
 function render(items) {
   if (!items.length) {
@@ -15,7 +25,7 @@ function render(items) {
   grid.innerHTML = items.map(coin => `
     <article class="coin-card" tabindex="0" data-id="${clean(coin.id)}" aria-label="${clean(coin.title || "İsimsiz sikke")} ayrıntılarını aç">
       <div class="coin-photo">
-        ${coin.frontImage ? `<img src="${clean(coin.frontImage)}" alt="${clean(coin.title || "Sikke")} ön yüzü" loading="lazy">` : `<div class="coin-placeholder"><img src="icon.svg" alt="" aria-hidden="true"></div>`}
+        ${coin.frontImage ? `<img src="${clean(rawFileUrl(coin.frontImage))}" alt="${clean(coin.title || "Sikke")} ön yüzü" loading="lazy">` : `<div class="coin-placeholder"><img src="icon.svg" alt="" aria-hidden="true"></div>`}
         <span class="tag">${clean(coin.status || "Arşivde")}</span>
       </div>
       <div class="card-body"><h3>${clean(coin.title || "Tanımlanmayı bekliyor")}</h3><div class="meta"><span>${clean(known(coin.country))}</span><span>${clean(known(coin.year))}</span><span>${clean(known(coin.denomination))}</span></div></div>
@@ -26,7 +36,7 @@ function showDetail(coin) {
   if (!coin) return;
   const face = (src, label) => `
     <figure class="detail-face">
-      <div class="detail-image">${src ? `<img src="${clean(src)}" alt="${clean(coin.title || "Sikke")} ${label.toLocaleLowerCase("tr")}">` : `<div class="coin-placeholder" aria-hidden="true"><img src="icon.svg" alt=""></div>`}</div>
+      <div class="detail-image">${src ? `<img src="${clean(rawFileUrl(src))}" alt="${clean(coin.title || "Sikke")} ${label.toLocaleLowerCase("tr")}">` : `<div class="coin-placeholder" aria-hidden="true"><img src="icon.svg" alt=""></div>`}</div>
       <figcaption>${label}${src ? "" : " fotoğrafı henüz eklenmedi"}</figcaption>
     </figure>`;
   document.querySelector("#coinDetail").innerHTML = `
@@ -49,10 +59,25 @@ function applyFilters() {
   }));
 }
 
-fetch(`data/coins.json?v=${Date.now()}`).then(r => {
-  if (!r.ok) throw new Error("Kayıtlar yüklenemedi");
-  return r.json();
-}).then(data => {
+async function fetchCoins() {
+  const sources = [
+    rawBase ? `${rawBase}data/coins.json?v=${Date.now()}` : "",
+    `data/coins.json?v=${Date.now()}`
+  ].filter(Boolean);
+  let lastError;
+  for (const source of sources) {
+    try {
+      const response = await fetch(source, { cache: "no-store" });
+      if (!response.ok) throw new Error("Kayıtlar yüklenemedi");
+      return response.json();
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError || new Error("Kayıtlar yüklenemedi");
+}
+
+fetchCoins().then(data => {
   coins = Array.isArray(data) ? data : [];
   const countries = [...new Set(coins.map(c => c.country).filter(Boolean))].sort((a,b) => a.localeCompare(b,"tr"));
   countryFilter.insertAdjacentHTML("beforeend", countries.map(c => `<option>${clean(c)}</option>`).join(""));
