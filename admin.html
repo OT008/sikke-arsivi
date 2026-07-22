@@ -23,16 +23,16 @@
     </section>
     <section id="editorPanel" class="panel hidden">
       <div class="section-heading">
-        <div><div class="eyebrow">Koleksiyona yeni kayıt</div><h2>Yeni para ekle</h2></div>
+        <div><div id="editorEyebrow" class="eyebrow">Koleksiyona yeni kayıt</div><h2 id="editorTitle">Yeni para ekle</h2></div>
         <p id="adminIdentity" class="subtle"></p>
       </div>
       <div id="imageGuide" class="image-guide">
         <strong>Görsel hazırlama standardı</strong>
-        <p>Ön ve arka yüzü yüklemeden önce <b>1600 × 1600 px</b> kare kırpın. Parayı tam ortaya alın, çevresinde yaklaşık %8–10 boşluk bırakın ve iki yüzde de aynı ölçeği kullanın. Site görseli kırpmaz; yalnızca gerekirse küçültüp WebP biçimine dönüştürür.</p>
+        <p id="imageGuideText">Ön ve arka yüzü yüklemeden önce <b>1600 × 1600 px</b> kare kırpın. Parayı tam ortaya alın, çevresinde yaklaşık %8–10 boşluk bırakın ve iki yüzde de aynı ölçeği kullanın. Site görseli kırpmaz; yalnızca gerekirse küçültüp WebP biçimine dönüştürür.</p>
       </div>
       <form id="coinForm" class="form-grid">
-        <label>Ön yüz fotoğrafı *<span class="field-hint">1600 × 1600 px önerilir</span><input id="frontImage" class="field" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="imageGuide" required></label>
-        <label>Arka yüz fotoğrafı *<span class="field-hint">Ön yüzle aynı ölçü ve ölçek</span><input id="backImage" class="field" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="imageGuide" required></label>
+        <label><span id="frontImageLabel">Ön yüz fotoğrafı *</span><span class="field-hint">1600 × 1600 px önerilir</span><input id="frontImage" class="field" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="imageGuide" required></label>
+        <label><span id="backImageLabel">Arka yüz fotoğrafı *</span><span class="field-hint">Ön yüzle aynı ölçü ve ölçek</span><input id="backImage" class="field" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="imageGuide" required></label>
         <div class="wide preview-row"><div id="frontPreview" class="preview">Ön yüz önizlemesi</div><div id="backPreview" class="preview">Arka yüz önizlemesi</div></div>
         <div id="imageNotice" class="wide notice hidden"></div>
         <label class="wide">Başlık<input id="title" class="field" placeholder="Örn. 1 Türk Lirası veya Tanımlanmayı bekliyor"></label>
@@ -42,7 +42,7 @@
         <label>Malzeme<input id="material" class="field" placeholder="Örn. Gümüş, bakır"></label>
         <label>Durum<select id="status" class="field"><option>Tanımlanmayı bekliyor</option><option>Tanımlandı</option><option>Araştırılıyor</option></select></label>
         <label class="wide">Notlar<textarea id="notes" class="field" placeholder="Paranın üzerindeki yazılar, edinme hikâyesi veya başka notlar…"></textarea></label>
-        <div class="wide actions"><button id="saveButton" class="button" type="submit">GitHub'a yükle ve yayınla</button><button id="logoutButton" class="button secondary" type="button">Çıkış</button></div>
+        <div class="wide actions"><button id="saveButton" class="button" type="submit">GitHub'a yükle ve yayınla</button><button id="cancelEditButton" class="button secondary hidden" type="button">Düzenlemeyi iptal et</button><button id="logoutButton" class="button secondary" type="button">Çıkış</button></div>
         <div id="saveNotice" class="wide notice hidden"></div>
       </form>
       <section class="manager" aria-labelledby="managerTitle">
@@ -50,7 +50,7 @@
           <div><div class="eyebrow">Arşiv yönetimi</div><h2 id="managerTitle">Eklenen paralar</h2></div>
           <button id="refreshCoinsButton" class="button secondary compact" type="button">Listeyi yenile</button>
         </div>
-        <p class="subtle">Bir kaydı sildiğinizde ön ve arka yüz görselleri de depodan kaldırılır. Bu işlem geri alınamaz.</p>
+        <p class="subtle">Bilgileri veya fotoğrafları değiştirmek için Düzenle'yi kullanın. Değiştirilen eski fotoğraf depodan otomatik kaldırılır.</p>
         <div id="managerNotice" class="notice hidden" role="status"></div>
         <div id="adminCoinList" class="admin-coin-list" aria-live="polite"></div>
       </section>
