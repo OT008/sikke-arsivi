@@ -1,5 +1,18 @@
 [
   {
+    "id": "2026-07-22-ae05f1dd",
+    "title": "Almanya - 2 Euro",
+    "country": "Almanya",
+    "year": "2002",
+    "denomination": "2 Euro",
+    "material": "Çift metalli",
+    "status": "Tanımlandı",
+    "notes": "Hediye - 2026",
+    "frontImage": "images/coins/2026-07-22-ae05f1dd-on.webp",
+    "backImage": "images/coins/2026-07-22-ae05f1dd-arka.webp",
+    "addedAt": "2026-07-22T16:09:02.343Z"
+  },
+  {
     "id": "2026-07-22-13603d95",
     "title": "Belçika - 50 Euro Cent",
     "country": "Belçika",
