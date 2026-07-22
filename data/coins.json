@@ -1,16 +1,17 @@
 [
   {
     "id": "2026-07-22-c03fd56a",
-    "title": "Tanımlanmayı bekliyor",
-    "country": "",
-    "year": "",
-    "denomination": "",
-    "material": "",
-    "status": "Tanımlanmayı bekliyor",
-    "notes": "",
+    "title": "asd",
+    "country": "asd",
+    "year": "asd",
+    "denomination": "ad",
+    "material": "asd",
+    "status": "Tanımlandı",
+    "notes": "asddd",
     "frontImage": "images/coins/2026-07-22-c03fd56a-on.webp",
     "backImage": "images/coins/2026-07-22-c03fd56a-arka.webp",
-    "addedAt": "2026-07-22T09:57:32.957Z"
+    "addedAt": "2026-07-22T09:57:32.957Z",
+    "updatedAt": "2026-07-22T10:58:11.070Z"
   },
   {
     "id": "2026-07-22-b1fa2545",
