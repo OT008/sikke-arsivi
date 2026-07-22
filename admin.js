@@ -8,7 +8,13 @@ const saveNotice = document.querySelector("#saveNotice");
 const imageNotice = document.querySelector("#imageNotice");
 const managerNotice = document.querySelector("#managerNotice");
 const adminCoinList = document.querySelector("#adminCoinList");
+const coinForm = document.querySelector("#coinForm");
+const saveButton = document.querySelector("#saveButton");
+const frontImageInput = document.querySelector("#frontImage");
+const backImageInput = document.querySelector("#backImage");
 let adminCoins = [];
+let editingCoinId = "";
+const previewObjectUrls = new Map();
 
 const clean = (value) => String(value ?? "").replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
 const repoPath = path => `/repos/${encodeURIComponent(config.adminUsername)}/${encodeURIComponent(config.repository)}/contents/${path.split("/").map(encodeURIComponent).join("/")}`;
@@ -43,7 +49,7 @@ document.querySelector("#loginForm").addEventListener("submit", async event => {
     if (user.login.toLowerCase() !== config.adminUsername.toLowerCase()) throw new Error("Bu GitHub hesabının yönetici yetkisi yok.");
     await api(`/repos/${encodeURIComponent(config.adminUsername)}/${encodeURIComponent(config.repository)}`);
     document.querySelector("#token").value = "";
-    document.querySelector("#adminIdentity").textContent = `${user.login} olarak bağlısınız. Yeni kayıt doğrudan ${config.repository} deposuna eklenecek.`;
+    document.querySelector("#adminIdentity").textContent = `${user.login} olarak bağlısınız. Kayıt değişiklikleri doğrudan ${config.repository} deposuna yazılacak.`;
     loginPanel.classList.add("hidden"); editorPanel.classList.remove("hidden");
     await loadAdminCoins();
   } catch (error) { githubToken = ""; setNotice(loginNotice, error.message, "error"); }
@@ -82,6 +88,28 @@ async function getJsonFile(path) {
   return { sha: file.sha, data: JSON.parse(new TextDecoder().decode(bytes)) };
 }
 
+function clearPreviewObjectUrl(inputId) {
+  const oldUrl = previewObjectUrls.get(inputId);
+  if (oldUrl) URL.revokeObjectURL(oldUrl);
+  previewObjectUrls.delete(inputId);
+}
+
+function showPreview(previewId, imagePath, alt, emptyText) {
+  const preview = document.querySelector(previewId);
+  preview.innerHTML = imagePath ? `<img src="${clean(imagePath)}" alt="${clean(alt)}">` : clean(emptyText);
+}
+
+function resetImagePreviews(coin = null) {
+  clearPreviewObjectUrl("#frontImage");
+  clearPreviewObjectUrl("#backImage");
+  showPreview("#frontPreview", coin?.frontImage, "Mevcut ön yüz fotoğrafı", "Ön yüz önizlemesi");
+  showPreview("#backPreview", coin?.backImage, "Mevcut arka yüz fotoğrafı", "Arka yüz önizlemesi");
+}
+
+function currentEditingCoin() {
+  return adminCoins.find(coin => coin.id === editingCoinId);
+}
+
 function updateImageNotice() {
   const messages = ["#frontImage", "#backImage"].map(selector => document.querySelector(selector).dataset.imageMessage).filter(Boolean);
   if (!messages.length) {
@@ -96,8 +124,17 @@ function bindPreview(inputId, previewId, faceName) {
   document.querySelector(inputId).addEventListener("change", async event => {
     const file = event.target.files[0]; const preview = document.querySelector(previewId);
     event.target.dataset.imageMessage = "";
-    if (!file) { preview.textContent = "Fotoğraf seçilmedi"; updateImageNotice(); return; }
-    const url = URL.createObjectURL(file); preview.innerHTML = `<img src="${url}" alt="Seçilen fotoğraf önizlemesi">`;
+    clearPreviewObjectUrl(inputId);
+    if (!file) {
+      const coin = currentEditingCoin();
+      const existingPath = inputId === "#frontImage" ? coin?.frontImage : coin?.backImage;
+      showPreview(previewId, existingPath, `Mevcut ${faceName.toLocaleLowerCase("tr")} fotoğrafı`, "Fotoğraf seçilmedi");
+      updateImageNotice();
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    previewObjectUrls.set(inputId, url);
+    preview.innerHTML = `<img src="${url}" alt="Seçilen ${clean(faceName.toLocaleLowerCase("tr"))} fotoğrafı önizlemesi">`;
     try {
       const bitmap = await createImageBitmap(file);
       const { width, height } = bitmap;
@@ -114,19 +151,64 @@ function bindPreview(inputId, previewId, faceName) {
 bindPreview("#frontImage", "#frontPreview", "Ön yüz");
 bindPreview("#backImage", "#backPreview", "Arka yüz");
 
+function setEditMode(enabled, coin = null) {
+  editingCoinId = enabled && coin ? coin.id : "";
+  coinForm.reset();
+  frontImageInput.required = !enabled;
+  backImageInput.required = !enabled;
+  frontImageInput.dataset.imageMessage = "";
+  backImageInput.dataset.imageMessage = "";
+  imageNotice.className = "notice hidden";
+  saveNotice.className = "notice hidden";
+
+  document.querySelector("#editorEyebrow").textContent = enabled ? "Arşiv kaydını düzenleme" : "Koleksiyona yeni kayıt";
+  document.querySelector("#editorTitle").textContent = enabled ? "Para bilgilerini düzenle" : "Yeni para ekle";
+  document.querySelector("#frontImageLabel").textContent = enabled ? "Ön yüz fotoğrafını değiştir" : "Ön yüz fotoğrafı *";
+  document.querySelector("#backImageLabel").textContent = enabled ? "Arka yüz fotoğrafını değiştir" : "Arka yüz fotoğrafı *";
+  document.querySelector("#imageGuideText").innerHTML = enabled
+    ? "Mevcut fotoğraflar aşağıda gösteriliyor. Yalnızca değiştirmek istediğiniz yüz için yeni bir dosya seçin. Yeni fotoğraf kaydedildikten sonra eski dosya depodan otomatik silinir."
+    : "Ön ve arka yüzü yüklemeden önce <b>1600 × 1600 px</b> kare kırpın. Parayı tam ortaya alın, çevresinde yaklaşık %8–10 boşluk bırakın ve iki yüzde de aynı ölçeği kullanın. Site görseli kırpmaz; yalnızca gerekirse küçültüp WebP biçimine dönüştürür.";
+  saveButton.textContent = enabled ? "Değişiklikleri kaydet ve yayınla" : "GitHub'a yükle ve yayınla";
+  document.querySelector("#cancelEditButton").classList.toggle("hidden", !enabled);
+
+  if (enabled && coin) {
+    document.querySelector("#title").value = coin.title || "";
+    document.querySelector("#country").value = coin.country || "";
+    document.querySelector("#coinYear").value = coin.year || "";
+    document.querySelector("#denomination").value = coin.denomination || "";
+    document.querySelector("#material").value = coin.material || "";
+    document.querySelector("#status").value = coin.status || "Tanımlanmayı bekliyor";
+    document.querySelector("#notes").value = coin.notes || "";
+  }
+
+  resetImagePreviews(enabled ? coin : null);
+  renderAdminCoins();
+}
+
+function startEditingCoin(coin) {
+  if (!coin) return;
+  setEditMode(true, coin);
+  document.querySelector("#editorTitle").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+document.querySelector("#cancelEditButton").addEventListener("click", () => setEditMode(false));
+
 function renderAdminCoins() {
   if (!adminCoins.length) {
     adminCoinList.innerHTML = `<div class="manager-empty">Arşivde henüz kayıtlı para yok.</div>`;
     return;
   }
   adminCoinList.innerHTML = adminCoins.map(coin => `
-    <article class="admin-coin-row" data-id="${clean(coin.id)}">
+    <article class="admin-coin-row${coin.id === editingCoinId ? " is-editing" : ""}" data-id="${clean(coin.id)}">
       <div class="admin-coin-thumb">${coin.frontImage ? `<img src="${clean(coin.frontImage)}" alt="">` : `<span>S</span>`}</div>
       <div class="admin-coin-copy">
         <strong>${clean(coin.title || "Tanımlanmayı bekliyor")}</strong>
         <span>${clean([coin.country, coin.year, coin.denomination].filter(Boolean).join(" · ") || "Bilgi eklenmemiş")}</span>
       </div>
-      <button class="delete-button" type="button" data-delete-id="${clean(coin.id)}" aria-label="${clean(coin.title || "Bu kaydı")} sil">Sil</button>
+      <div class="admin-row-actions">
+        <button class="edit-button" type="button" data-edit-id="${clean(coin.id)}" aria-label="${clean(coin.title || "Bu kaydı")} düzenle">Düzenle</button>
+        <button class="delete-button" type="button" data-delete-id="${clean(coin.id)}" aria-label="${clean(coin.title || "Bu kaydı")} sil">Sil</button>
+      </div>
     </article>`).join("");
 }
 
@@ -136,6 +218,7 @@ async function loadAdminCoins() {
   try {
     const current = await getJsonFile("data/coins.json");
     adminCoins = Array.isArray(current.data) ? current.data : [];
+    if (editingCoinId && !currentEditingCoin()) setEditMode(false);
     renderAdminCoins();
     managerNotice.className = "notice hidden";
   } catch (error) {
@@ -175,7 +258,8 @@ async function deleteCoin(coin, button) {
     }
 
     adminCoins = updatedCoins;
-    renderAdminCoins();
+    if (editingCoinId === coin.id) setEditMode(false);
+    else renderAdminCoins();
     if (imageErrors.length) setNotice(managerNotice, "Kayıt silindi; ancak görsel dosyalarından biri depoda kalmış olabilir.", "warning");
     else setNotice(managerNotice, "Kayıt ve ön/arka yüz görselleri başarıyla silindi.", "success");
   } catch (error) {
@@ -185,48 +269,83 @@ async function deleteCoin(coin, button) {
 }
 
 adminCoinList.addEventListener("click", event => {
-  const button = event.target.closest("[data-delete-id]");
-  if (!button) return;
-  deleteCoin(adminCoins.find(coin => coin.id === button.dataset.deleteId), button);
+  const editButton = event.target.closest("[data-edit-id]");
+  if (editButton) {
+    startEditingCoin(adminCoins.find(coin => coin.id === editButton.dataset.editId));
+    return;
+  }
+  const deleteButton = event.target.closest("[data-delete-id]");
+  if (!deleteButton) return;
+  deleteCoin(adminCoins.find(coin => coin.id === deleteButton.dataset.deleteId), deleteButton);
 });
 
 document.querySelector("#refreshCoinsButton").addEventListener("click", loadAdminCoins);
 
-document.querySelector("#coinForm").addEventListener("submit", async event => {
+coinForm.addEventListener("submit", async event => {
   event.preventDefault();
-  const saveButton = document.querySelector("#saveButton");
-  const frontFile = document.querySelector("#frontImage").files[0];
-  const backFile = document.querySelector("#backImage").files[0];
-  if (!frontFile || !backFile) {
+  const frontFile = frontImageInput.files[0];
+  const backFile = backImageInput.files[0];
+  const isEditing = Boolean(editingCoinId);
+  if (!isEditing && (!frontFile || !backFile)) {
     setNotice(saveNotice, "Lütfen paranın hem ön hem arka yüz fotoğrafını seçin.", "error");
     return;
   }
-  saveButton.disabled = true; setNotice(saveNotice, "Fotoğraflar hazırlanıyor ve GitHub'a yükleniyor…");
+
+  saveButton.disabled = true;
+  setNotice(saveNotice, isEditing ? "Değişiklikler hazırlanıyor ve GitHub'a kaydediliyor…" : "Fotoğraflar hazırlanıyor ve GitHub'a yükleniyor…");
   try {
-    const id = `${new Date().toISOString().slice(0,10)}-${crypto.randomUUID().slice(0,8)}`;
-    const frontPath = `images/coins/${id}-on.webp`;
-    await putFile(frontPath, await toBase64(await imageToWebP(frontFile)), `Yeni sikke fotoğrafı: ${id}`);
-    const backPath = `images/coins/${id}-arka.webp`;
-    await putFile(backPath, await toBase64(await imageToWebP(backFile)), `Sikke arka yüzü: ${id}`);
     const current = await getJsonFile("data/coins.json");
+    const currentCoins = Array.isArray(current.data) ? current.data : [];
+    const storedCoin = isEditing ? currentCoins.find(coin => coin.id === editingCoinId) : null;
+    if (isEditing && !storedCoin) throw new Error("Düzenlenen kayıt arşivde bulunamadı; listeyi yenileyip tekrar deneyin");
+
+    const id = storedCoin?.id || `${new Date().toISOString().slice(0,10)}-${crypto.randomUUID().slice(0,8)}`;
+    const revision = crypto.randomUUID().slice(0,8);
+    let frontPath = storedCoin?.frontImage || "";
+    let backPath = storedCoin?.backImage || "";
+
+    if (frontFile) {
+      frontPath = isEditing ? `images/coins/${id}-on-${revision}.webp` : `images/coins/${id}-on.webp`;
+      await putFile(frontPath, await toBase64(await imageToWebP(frontFile)), `${isEditing ? "Sikke ön yüzünü güncelle" : "Yeni sikke fotoğrafı"}: ${id}`);
+    }
+    if (backFile) {
+      backPath = isEditing ? `images/coins/${id}-arka-${revision}.webp` : `images/coins/${id}-arka.webp`;
+      await putFile(backPath, await toBase64(await imageToWebP(backFile)), `${isEditing ? "Sikke arka yüzünü güncelle" : "Sikke arka yüzü"}: ${id}`);
+    }
+
     const coin = {
-      id, title: document.querySelector("#title").value.trim() || "Tanımlanmayı bekliyor",
+      ...(storedCoin || {}), id, title: document.querySelector("#title").value.trim() || "Tanımlanmayı bekliyor",
       country: document.querySelector("#country").value.trim(), year: document.querySelector("#coinYear").value.trim(),
       denomination: document.querySelector("#denomination").value.trim(), material: document.querySelector("#material").value.trim(),
       status: document.querySelector("#status").value, notes: document.querySelector("#notes").value.trim(),
-      frontImage: frontPath, backImage: backPath, addedAt: new Date().toISOString()
+      frontImage: frontPath, backImage: backPath,
+      ...(isEditing ? { updatedAt: new Date().toISOString() } : { addedAt: new Date().toISOString() })
     };
-    const data = Array.isArray(current.data) ? [coin, ...current.data] : [coin];
+    const data = isEditing ? currentCoins.map(item => item.id === coin.id ? coin : item) : [coin, ...currentCoins];
     const encoded = await toBase64(new Blob([JSON.stringify(data, null, 2) + "\n"], { type: "application/json" }));
-    await putFile("data/coins.json", encoded, `Arşive yeni sikke ekle: ${coin.title}`, current.sha);
+    await putFile("data/coins.json", encoded, `${isEditing ? "Sikke bilgilerini güncelle" : "Arşive yeni sikke ekle"}: ${coin.title}`, current.sha);
+
+    const oldImageErrors = [];
+    if (isEditing) {
+      const replacedOldPaths = [
+        frontFile && storedCoin.frontImage !== frontPath ? storedCoin.frontImage : "",
+        backFile && storedCoin.backImage !== backPath ? storedCoin.backImage : ""
+      ].filter(isManagedImage);
+      for (const path of [...new Set(replacedOldPaths)]) {
+        try { await deleteRepoFile(path, `Değiştirilen eski sikke görselini kaldır: ${id}`); }
+        catch (error) { oldImageErrors.push(error.message); }
+      }
+    }
+
     adminCoins = data;
-    renderAdminCoins();
-    event.target.reset(); document.querySelector("#frontPreview").textContent = "Ön yüz önizlemesi"; document.querySelector("#backPreview").textContent = "Arka yüz önizlemesi";
-    imageNotice.className = "notice hidden";
-    setNotice(saveNotice, "Sikke başarıyla yüklendi. GitHub Pages birkaç dakika içinde galeriyi güncelleyecek.", "success");
-  } catch (error) { setNotice(saveNotice, `${error.message}. Yükleme yarıda kaldıysa GitHub'daki images/coins klasörünü kontrol edin.`, "error"); }
+    setEditMode(false);
+    if (oldImageErrors.length) setNotice(saveNotice, "Bilgiler ve yeni fotoğraf kaydedildi; ancak eski fotoğraf dosyalarından biri depoda kalmış olabilir.", "warning");
+    else setNotice(saveNotice, isEditing ? "Para bilgileri ve fotoğrafları başarıyla güncellendi. Galeri birkaç dakika içinde yenilenecek." : "Sikke başarıyla yüklendi. GitHub Pages birkaç dakika içinde galeriyi güncelleyecek.", "success");
+  } catch (error) {
+    setNotice(saveNotice, `${error.message}. İşlem tamamlanmadıysa mevcut kayıt ve eski fotoğraflar korunur; yeni yüklenen ancak kullanılmayan bir dosya depoda kalmış olabilir.`, "error");
+  }
   finally { saveButton.disabled = false; }
 });
 
-document.querySelector("#logoutButton").addEventListener("click", () => { githubToken = ""; editorPanel.classList.add("hidden"); loginPanel.classList.remove("hidden"); setNotice(loginNotice, "Güvenli şekilde çıkış yapıldı.", "success"); });
+document.querySelector("#logoutButton").addEventListener("click", () => { githubToken = ""; setEditMode(false); editorPanel.classList.add("hidden"); loginPanel.classList.remove("hidden"); setNotice(loginNotice, "Güvenli şekilde çıkış yapıldı.", "success"); });
 window.addEventListener("pagehide", () => { githubToken = ""; });
