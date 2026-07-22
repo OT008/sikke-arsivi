@@ -1,5 +1,18 @@
 [
   {
+    "id": "2026-07-22-b4064dc1",
+    "title": "İtalya - 2 Euro Cent",
+    "country": "İtalya",
+    "year": "2016",
+    "denomination": "2 Euro Cent",
+    "material": "Bakır kaplamalı çelik",
+    "status": "Tanımlandı",
+    "notes": "Hediye - 2026",
+    "frontImage": "images/coins/2026-07-22-b4064dc1-on.webp",
+    "backImage": "images/coins/2026-07-22-b4064dc1-arka.webp",
+    "addedAt": "2026-07-22T16:56:35.543Z"
+  },
+  {
     "id": "2026-07-22-fae270db",
     "title": "Hırvatistan - 2 Euro Cent",
     "country": "Hırvatistan",
