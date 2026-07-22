@@ -1,5 +1,18 @@
 [
   {
+    "id": "2026-07-22-5b50ab5b",
+    "title": "Almanya - 1 Euro",
+    "country": "Almanya",
+    "year": "2002",
+    "denomination": "1 Euro",
+    "material": "Çift metalli",
+    "status": "Tanımlandı",
+    "notes": "Hediye - 2026",
+    "frontImage": "images/coins/2026-07-22-5b50ab5b-on.webp",
+    "backImage": "images/coins/2026-07-22-5b50ab5b-arka.webp",
+    "addedAt": "2026-07-22T16:10:15.760Z"
+  },
+  {
     "id": "2026-07-22-ae05f1dd",
     "title": "Almanya - 2 Euro",
     "country": "Almanya",
