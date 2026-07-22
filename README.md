@@ -20,9 +20,9 @@ Yayınlanan sitenin `admin.html` sayfasını açın, erişim anahtarınızı gir
 - Parayı ortalayın ve çevresinde yaklaşık **%8–10 boşluk** bırakın.
 - İki yüzde de aynı ölçeği kullanın. Site fotoğrafları kırpmaz; yalnızca gerekirse küçültüp WebP biçimine dönüştürür.
 
-### Kayıt silme
+### Kayıt düzenleme ve silme
 
-Yönetici girişi yaptıktan sonra **Eklenen paralar** bölümünden bir kaydı silebilirsiniz. Silme işlemi kaydı `data/coins.json` dosyasından kaldırır ve o kayda ait ön/arka yüz görsellerini de siler.
+Yönetici girişi yaptıktan sonra **Eklenen paralar** bölümünden bir kaydı düzenleyebilir veya silebilirsiniz. Düzenlerken yalnızca değiştirmek istediğiniz yüzün yeni fotoğrafını seçmeniz yeterlidir; yeni fotoğraf kayda bağlandıktan sonra eski dosya otomatik silinir. Silme işlemi kaydı `data/coins.json` dosyasından kaldırır ve o kayda ait ön/arka yüz görsellerini de siler.
 
 ## Tema seçimi
 
