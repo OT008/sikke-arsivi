@@ -1,5 +1,18 @@
 [
   {
+    "id": "2026-07-22-fae270db",
+    "title": "Hırvatistan - 2 Euro Cent",
+    "country": "Hırvatistan",
+    "year": "2023",
+    "denomination": "2 Euro Cent",
+    "material": "Bakır kaplamalı çelik",
+    "status": "Tanımlandı",
+    "notes": "Hediye - 2026",
+    "frontImage": "images/coins/2026-07-22-fae270db-on.webp",
+    "backImage": "images/coins/2026-07-22-fae270db-arka.webp",
+    "addedAt": "2026-07-22T16:55:00.887Z"
+  },
+  {
     "id": "2026-07-22-21b69d17",
     "title": "Almanya - 2 Euro Cent",
     "country": "Almanya",
