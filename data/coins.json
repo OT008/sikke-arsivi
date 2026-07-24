@@ -20,10 +20,11 @@
     "denomination": "1 Euro Cent",
     "material": "Bakır kaplamalı çelik",
     "status": "Tanımlandı",
-    "notes": "Hediye - 2026",
+    "notes": "Mustafa LÖK\nHediye - 2026",
     "frontImage": "images/coins/2026-07-22-d4e702f9-on.webp",
     "backImage": "images/coins/2026-07-22-d4e702f9-arka.webp",
-    "addedAt": "2026-07-22T16:58:45.174Z"
+    "addedAt": "2026-07-22T16:58:45.174Z",
+    "updatedAt": "2026-07-24T13:17:51.479Z"
   },
   {
     "id": "2026-07-22-911e1671",
