@@ -1,5 +1,18 @@
 [
   {
+    "id": "2026-08-10-a18e8e9a",
+    "title": "Türkiye - 1000 Lira",
+    "country": "Türkiye",
+    "year": "1990",
+    "denomination": "1000 Lira",
+    "material": "Bakır-nikel-çinko alaşımı",
+    "status": "Tanımlandı",
+    "notes": "",
+    "frontImage": "images/coins/2026-08-10-a18e8e9a-on.webp",
+    "backImage": "images/coins/2026-08-10-a18e8e9a-arka.webp",
+    "addedAt": "2026-08-10T15:18:32.782Z"
+  },
+  {
     "id": "2026-08-10-c045f548",
     "title": "Türkiye - 25 Lira",
     "country": "Türkiye",
