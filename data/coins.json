@@ -1,5 +1,18 @@
 [
   {
+    "id": "2026-08-10-3a0a85c0",
+    "title": "Türkiye - 25 Kuruş",
+    "country": "Türkiye",
+    "year": "1968",
+    "denomination": "25 Kuruş",
+    "material": "Çelik",
+    "status": "Tanımlandı",
+    "notes": "",
+    "frontImage": "images/coins/2026-08-10-3a0a85c0-on.webp",
+    "backImage": "images/coins/2026-08-10-3a0a85c0-arka.webp",
+    "addedAt": "2026-08-10T15:25:17.748Z"
+  },
+  {
     "id": "2026-08-10-35b9e8c2",
     "title": "Türkiye - 10 Lira",
     "country": "Türkiye",
