@@ -14,7 +14,7 @@
   },
   {
     "id": "2026-08-10-b8a7466a",
-    "title": "Türkiye - 50 Yeni Kuruş (2005)",
+    "title": "Türkiye - 50 Yeni Kuruş",
     "country": "Türkiye",
     "year": "2005",
     "denomination": "50 Yeni Kuruş",
@@ -23,7 +23,8 @@
     "notes": "",
     "frontImage": "images/coins/2026-08-10-b8a7466a-on.webp",
     "backImage": "images/coins/2026-08-10-b8a7466a-arka.webp",
-    "addedAt": "2026-08-10T15:06:56.898Z"
+    "addedAt": "2026-08-10T15:06:56.898Z",
+    "updatedAt": "2026-08-10T15:10:18.254Z"
   },
   {
     "id": "2026-07-22-893c759c",
