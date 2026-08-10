@@ -1,5 +1,18 @@
 [
   {
+    "id": "2026-08-10-7f253599",
+    "title": "Türkiye - 25 Bin Lira",
+    "country": "Türkiye",
+    "year": "1998",
+    "denomination": "25 Bin Lira",
+    "material": "Pirinç",
+    "status": "Tanımlandı",
+    "notes": "",
+    "frontImage": "images/coins/2026-08-10-7f253599-on.webp",
+    "backImage": "images/coins/2026-08-10-7f253599-arka.webp",
+    "addedAt": "2026-08-10T15:11:18.786Z"
+  },
+  {
     "id": "2026-08-10-254061f5",
     "title": "Türkiye - 100.000 Lira (2000)",
     "country": "Türkiye",
