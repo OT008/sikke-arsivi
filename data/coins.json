@@ -1,5 +1,18 @@
 [
   {
+    "id": "2026-08-10-ae22f5f2",
+    "title": "Türkiye - 50 Kuruş",
+    "country": "Türkiye",
+    "year": "2024",
+    "denomination": "50 Kuruş",
+    "material": "Çift metalli",
+    "status": "Tanımlandı",
+    "notes": "",
+    "frontImage": "images/coins/2026-08-10-ae22f5f2-on.webp",
+    "backImage": "images/coins/2026-08-10-ae22f5f2-arka.webp",
+    "addedAt": "2026-08-10T15:40:57.399Z"
+  },
+  {
     "id": "2026-08-10-e2fb4341",
     "title": "Türkiye - 25 Yeni Kuruş",
     "country": "Türkiye",
