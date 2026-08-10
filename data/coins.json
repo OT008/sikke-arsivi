@@ -1,5 +1,18 @@
 [
   {
+    "id": "2026-08-10-6d59dca3",
+    "title": "Türkiye - 1 Yeni Kuruş",
+    "country": "Türkiye",
+    "year": "2005",
+    "denomination": "1 Yeni Kuruş",
+    "material": "Pirinç",
+    "status": "Tanımlandı",
+    "notes": "",
+    "frontImage": "images/coins/2026-08-10-6d59dca3-on.webp",
+    "backImage": "images/coins/2026-08-10-6d59dca3-arka.webp",
+    "addedAt": "2026-08-10T15:21:55.284Z"
+  },
+  {
     "id": "2026-08-10-4f40e17d",
     "title": "Türkiye - 1 Türk Lirası",
     "country": "Türkiye",
