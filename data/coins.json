@@ -1,5 +1,18 @@
 [
   {
+    "id": "2026-08-10-35b9e8c2",
+    "title": "Türkiye - 10 Lira",
+    "country": "Türkiye",
+    "year": "1987",
+    "denomination": "10 Lira",
+    "material": "Alüminyum",
+    "status": "Tanımlandı",
+    "notes": "",
+    "frontImage": "images/coins/2026-08-10-35b9e8c2-on.webp",
+    "backImage": "images/coins/2026-08-10-35b9e8c2-arka.webp",
+    "addedAt": "2026-08-10T15:24:15.093Z"
+  },
+  {
     "id": "2026-08-10-6d59dca3",
     "title": "Türkiye - 1 Yeni Kuruş",
     "country": "Türkiye",
