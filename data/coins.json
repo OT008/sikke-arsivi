@@ -1,5 +1,18 @@
 [
   {
+    "id": "2026-08-10-481ec64f",
+    "title": "Türkiye - 5 Kuruş",
+    "country": "Türkiye",
+    "year": "1975",
+    "denomination": "5 Kuruş",
+    "material": "Alüminyum",
+    "status": "Tanımlandı",
+    "notes": "",
+    "frontImage": "images/coins/2026-08-10-481ec64f-on.webp",
+    "backImage": "images/coins/2026-08-10-481ec64f-arka.webp",
+    "addedAt": "2026-08-10T15:33:59.898Z"
+  },
+  {
     "id": "2026-08-10-6f2f2cdd",
     "title": "Türkiye - 1 Türk Lirası",
     "country": "Türkiye",
