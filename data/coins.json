@@ -1,5 +1,18 @@
 [
   {
+    "id": "2026-08-10-638d7ecb",
+    "title": "Türkiye - 5 Türk Lirası",
+    "country": "Türkiye",
+    "year": "2025",
+    "denomination": "5 Türk Lirası",
+    "material": "Çift metalli",
+    "status": "Tanımlandı",
+    "notes": "",
+    "frontImage": "images/coins/2026-08-10-638d7ecb-on.webp",
+    "backImage": "images/coins/2026-08-10-638d7ecb-arka.webp",
+    "addedAt": "2026-08-10T15:44:31.508Z"
+  },
+  {
     "id": "2026-08-10-963ab509",
     "title": "Türkiye - 1 Türk Lirası",
     "country": "Türkiye",
