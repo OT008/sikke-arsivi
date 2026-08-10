@@ -1,5 +1,18 @@
 [
   {
+    "id": "2026-08-10-2d027fd3",
+    "title": "Türkiye - 1 Türk Lirası",
+    "country": "Türkiye",
+    "year": "2019",
+    "denomination": "1 Türk Lirası",
+    "material": "Çift metalli",
+    "status": "Tanımlandı",
+    "notes": "",
+    "frontImage": "images/coins/2026-08-10-2d027fd3-on.webp",
+    "backImage": "images/coins/2026-08-10-2d027fd3-arka.webp",
+    "addedAt": "2026-08-10T15:16:16.392Z"
+  },
+  {
     "id": "2026-08-10-18bda085",
     "title": "Türkiye - 10 Yeni Kuruş",
     "country": "Türkiye",
