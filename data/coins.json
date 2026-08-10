@@ -1,5 +1,18 @@
 [
   {
+    "id": "2026-08-10-4f40e17d",
+    "title": "Türkiye - 1 Türk Lirası",
+    "country": "Türkiye",
+    "year": "2016",
+    "denomination": "1 Türk Lirası",
+    "material": "Çift metalli",
+    "status": "Tanımlanmayı bekliyor",
+    "notes": "",
+    "frontImage": "images/coins/2026-08-10-4f40e17d-on.webp",
+    "backImage": "images/coins/2026-08-10-4f40e17d-arka.webp",
+    "addedAt": "2026-08-10T15:20:46.867Z"
+  },
+  {
     "id": "2026-08-10-a18e8e9a",
     "title": "Türkiye - 1000 Lira",
     "country": "Türkiye",
