@@ -92,7 +92,7 @@
   },
   {
     "id": "2026-08-10-254061f5",
-    "title": "Türkiye - 100.000 Lira (2000)",
+    "title": "Türkiye - 100.000 Lira",
     "country": "Türkiye",
     "year": "2000",
     "denomination": "100.000 Lira",
@@ -101,7 +101,8 @@
     "notes": "",
     "frontImage": "images/coins/2026-08-10-254061f5-on.webp",
     "backImage": "images/coins/2026-08-10-254061f5-arka.webp",
-    "addedAt": "2026-08-10T15:08:04.871Z"
+    "addedAt": "2026-08-10T15:08:04.871Z",
+    "updatedAt": "2026-08-10T15:19:33.541Z"
   },
   {
     "id": "2026-08-10-b8a7466a",
