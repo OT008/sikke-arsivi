@@ -1,5 +1,18 @@
 [
   {
+    "id": "2026-08-10-61eb9b23",
+    "title": "Türkiye - 25 Kuruş",
+    "country": "Türkiye",
+    "year": "2021",
+    "denomination": "25 Kuruş",
+    "material": "Bakır-nikel alaşımı",
+    "status": "Tanımlandı",
+    "notes": "",
+    "frontImage": "images/coins/2026-08-10-61eb9b23-on.webp",
+    "backImage": "images/coins/2026-08-10-61eb9b23-arka.webp",
+    "addedAt": "2026-08-10T15:35:07.423Z"
+  },
+  {
     "id": "2026-08-10-481ec64f",
     "title": "Türkiye - 5 Kuruş",
     "country": "Türkiye",
