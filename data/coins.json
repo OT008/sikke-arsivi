@@ -1,5 +1,18 @@
 [
   {
+    "id": "2026-08-10-c045f548",
+    "title": "Türkiye - 25 Lira",
+    "country": "Türkiye",
+    "year": "1987",
+    "denomination": "25 Lira",
+    "material": "Alüminyum",
+    "status": "Tanımlandı",
+    "notes": "",
+    "frontImage": "images/coins/2026-08-10-c045f548-on.webp",
+    "backImage": "images/coins/2026-08-10-c045f548-arka.webp",
+    "addedAt": "2026-08-10T15:17:25.654Z"
+  },
+  {
     "id": "2026-08-10-2d027fd3",
     "title": "Türkiye - 1 Türk Lirası",
     "country": "Türkiye",
