@@ -19,11 +19,12 @@
     "year": "1998",
     "denomination": "5 Norveç Kronu",
     "material": "Bakır-nikel alaşımı",
-    "status": "Tanımlanmayı bekliyor",
+    "status": "Tanımlandı",
     "notes": "Umut BAŞEV\nHediye - 2026",
     "frontImage": "images/coins/2026-09-18-c0c6ac8c-on.webp",
     "backImage": "images/coins/2026-09-18-c0c6ac8c-arka.webp",
-    "addedAt": "2026-09-18T11:17:36.327Z"
+    "addedAt": "2026-09-18T11:17:36.327Z",
+    "updatedAt": "2026-09-18T11:27:43.341Z"
   },
   {
     "id": "2026-09-18-198f086b",
